@@ -38,6 +38,11 @@ def level3():
                 self.speed = self.MAX_FORWARD_SPEED
             if self.speed < -self.MAX_REVERSE_SPEED:
                 self.speed = -self.MAX_REVERSE_SPEED
+            elif self.k_up == 0 and self.k_down == 0:
+                if self.speed > 0:
+                    self.speed -= 0.15
+                elif self.speed < 0:
+                    self.speed += 0.15
             self.direction += (self.k_right + self.k_left)
             x, y = (self.position)
             rad = self.direction * math.pi / 180

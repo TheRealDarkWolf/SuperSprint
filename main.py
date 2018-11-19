@@ -118,8 +118,8 @@ def level1():
             print(down)
             print(event.key)
             if win_condition == None:
-                if event.key == K_RIGHT and car.speed != 0: car.k_right = down * -5
-                elif event.key == K_LEFT and car.speed != 0: car.k_left = down * 5
+                if event.key == K_RIGHT: car.k_right = down * -5
+                elif event.key == K_LEFT: car.k_left = down * 5
                 elif event.key == K_UP: car.k_up = down * 1
                 elif event.key == K_DOWN: car.k_down = down * -1
                 elif event.key == K_ESCAPE: sys.exit(0) # quit the game
