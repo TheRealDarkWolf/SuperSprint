@@ -134,6 +134,7 @@ def level2():
         #USER INPUT
         deltat = clock.tick(30)
         for event in pygame.event.get():
+            if event.type == pygame.QUIT: sys.exit(0)
             if not hasattr(event, 'key'): continue
             down = event.type == KEYDOWN  
             if win_condition == None: 

@@ -9,6 +9,7 @@ screen = pygame.display.set_mode((1024, 768))
 while 1:
     screen.fill((0,0,0))
     for event in pygame.event.get():
+                if event.type == pygame.QUIT: sys.exit(0)
                 if not hasattr(event, 'key'): continue
                 if event.key == K_SPACE:
                     main.level1()
