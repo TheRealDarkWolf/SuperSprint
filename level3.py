@@ -1,8 +1,8 @@
 #initialize the screen
-import pygame, math, sys, time, level3
+import pygame, math, sys, time, end
 from pygame.locals import *
 
-def level2():
+def level3():
     pygame.init()
     screen = pygame.display.set_mode((1024, 768))
     #GAME CLOCK
@@ -38,6 +38,11 @@ def level2():
                 self.speed = self.MAX_FORWARD_SPEED
             if self.speed < -self.MAX_REVERSE_SPEED:
                 self.speed = -self.MAX_REVERSE_SPEED
+            elif self.k_up == 0 and self.k_down == 0:
+                if self.speed > 0:
+                    self.speed -= 0.15
+                elif self.speed < 0:
+                    self.speed += 0.15
             self.direction += (self.k_right + self.k_left)
             x, y = (self.position)
             rad = self.direction * math.pi / 180
@@ -82,32 +87,37 @@ def level2():
 
     #level design
     pads = [
-        PadSprite((0, 200)),
-        PadSprite((0, 400)),
-        HorizontalPad((60, 0)),
-        HorizontalPad((300, 0)),
-        HorizontalPad((700, 0)),
-        HorizontalPad((900, 0)),
-        PadSprite((1024, 100)),
-        PadSprite((1024, 550)),
-        HorizontalPad((1024, 768)),
-        HorizontalPad((624, 768)),
-        HorizontalPad((224, 768)),
-        PadSprite((200, 768)),
-        PadSprite((200, 368)),
-        HorizontalPad((450, 130)),
-        HorizontalPad((550, 130)),
-        PadSprite((800, 375)),
-        SmallHorizontalPad((670, 615)),
-        SmallHorizontalPad((470, 615)),
-        SmallVerticalPad((350, 490)),
-        SmallVerticalPad((350, 390)),
-        SmallHorizontalPad((470, 270)),
-        SmallVerticalPad((600, 390))
-        # PadSprite((200, 368))
-    
-    
+        SmallVerticalPad((0, 550)),
+        SmallVerticalPad((0, 390)),
+        SmallVerticalPad((0, 190)),
+        SmallVerticalPad((0, 90)),
+        SmallVerticalPad((100, -100)),
+        SmallVerticalPad((100, 290)),
+        SmallVerticalPad((100, 390)),
+        SmallVerticalPad((100, 490)),
+        SmallVerticalPad((200, 590)),
+        SmallVerticalPad((200, 290)),
+        SmallVerticalPad((200, 690)),
+        SmallVerticalPad((300, 590)),
+        SmallVerticalPad((300, 290)),
+        SmallVerticalPad((400, 535)),
+        SmallVerticalPad((400, 225)),
+        SmallVerticalPad((470, 490)),
+        SmallVerticalPad((600, 690)),
+        SmallVerticalPad((600, 290)),
+        SmallVerticalPad((600, 190)),
+        SmallVerticalPad((700, 690)),
+        SmallVerticalPad((700, 290)),
+        SmallVerticalPad((800, 690)),
+        SmallVerticalPad((800, 290)),
+        SmallVerticalPad((900, -50)),
+        SmallVerticalPad((1000, 690)),
+        SmallVerticalPad((1000, 290)),
+        HorizontalPad((338,170)),
+        HorizontalPad((600,170))
+        
     ]
+
     pad_group = pygame.sprite.RenderPlain(*pads)
 
     class Trophy(pygame.sprite.Sprite):
@@ -134,6 +144,7 @@ def level2():
         #USER INPUT
         deltat = clock.tick(30)
         for event in pygame.event.get():
+            if event.type == pygame.QUIT: sys.exit(0)
             if not hasattr(event, 'key'): continue
             down = event.type == KEYDOWN  
             if win_condition == None: 
@@ -142,14 +153,14 @@ def level2():
                 elif event.key == K_UP: car.k_up = down * 2
                 elif event.key == K_DOWN: car.k_down = down * -2 
                 elif event.key == K_ESCAPE: sys.exit(0) # quit the game
-            elif win_condition == True and event.key == K_SPACE: level3.level3()
+            elif win_condition == True and event.key == K_SPACE: end.end_game()
             elif win_condition == False and event.key == K_SPACE: 
-                level2()
+                level3()
                 t0 = t1
-            elif event.key == K_ESCAPE: sys.exit(0)    
+            elif event.key == K_ESCAPE: sys.exit(0)  
         
         #COUNTDOWN TIMER
-        seconds = round((20 - dt),2)
+        seconds = round((15 - dt),2)
         if win_condition == None:
             timer_text = font.render(str(seconds), True, (255,255,0))
             if seconds <= 0:

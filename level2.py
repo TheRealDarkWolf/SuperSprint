@@ -1,63 +1,20 @@
-![Alt text](images/main_menu_image.png?raw=true)
-##YouTube DEMO Video
-https://youtu.be/A8tv_3M1tR4
-
-## Overview: This car racing game is my first python project and was a fun way to learn Python and get experience with Pygame. The game is reminiscent of most 2d racing games, there is a starting point and an ending point, in this case a trophy. Contact with the trophy in the allotted time will satisfy the win condition and allow you to proceed, collision with any of the wall barriers or an expiration of the timer will fail you. There are 3 levels in total, of increasing difficulty. Good luck! If you cannot play this game for whatever reason, I have attached a video showing the gameplay at the bottom of the README.
-
-
-##How To Play: Make sure you have a copy of Python 2.7 installed and the Pygame library. Open the Main_menu.py to begin and follow the prompt to continue. Good Luck!
-
-#Example terminal command:
-```
-python Main_Menu.py
-```
-##Controls:
-- Up Arrow: Acceleration
-- Down Arrow: Brake, Reverse
-- Left/Right Arrows: Turn
-- Escape: Exit
-- Space: Continue/Retry (at level end)
-
-##Languages used: 
-  - Python
-  
-  Library:
-  - Pygame
-
-  Design:
-  - Paintbrush
-
-##MVP (Minimum Viable Product): 
-Initial MVP
-  - One, bug-free, complete level from start to finish
-  
-Strech Goals
-  - Multiple levels
-  - Timed condition
-  - Multiple lives
-  - Multiplayer support
-  
-
-##Code Snippets
-This is the code from the first level, the second and third levels are essentially the same with tweaks to barrier placement and timer settings.
-``` python
 #initialize the screen
-import pygame, math, sys, level2, time
+import pygame, math, sys, time, level3
 from pygame.locals import *
 
-def level1():
+def level2():
     pygame.init()
     screen = pygame.display.set_mode((1024, 768))
     #GAME CLOCK
     clock = pygame.time.Clock()
     font = pygame.font.Font(None, 75)
+    win_condition = None
+    pygame.mixer.music.load('My_Life_Be_Like.mp3')
     win_font = pygame.font.Font(None, 50)
     win_condition = None
     win_text = font.render('', True, (0, 255, 0))
     loss_text = font.render('', True, (255, 0, 0))
-    pygame.mixer.music.load('My_Life_Be_Like.mp3')
     t0 = time.time()
-    
 
 
 
@@ -81,6 +38,11 @@ def level1():
                 self.speed = self.MAX_FORWARD_SPEED
             if self.speed < -self.MAX_REVERSE_SPEED:
                 self.speed = -self.MAX_REVERSE_SPEED
+            elif self.k_up == 0 and self.k_down == 0:
+                if self.speed > 0:
+                    self.speed -= 0.15
+                elif self.speed < 0:
+                    self.speed += 0.15
             self.direction += (self.k_right + self.k_left)
             x, y = (self.position)
             rad = self.direction * math.pi / 180
@@ -92,29 +54,64 @@ def level1():
             self.rect.center = self.position
 
     class PadSprite(pygame.sprite.Sprite):
-        normal = pygame.image.load('images/race_pads.png')
-        hit = pygame.image.load('images/collision.png')
+        normal = pygame.image.load('images/vertical_pads.png')
         def __init__(self, position):
             super(PadSprite, self).__init__()
             self.rect = pygame.Rect(self.normal.get_rect())
             self.rect.center = position
-        def update(self, hit_list):
-            if self in hit_list: self.image = self.hit
-            else: self.image = self.normal
+            self.image = self.normal
+
+    class HorizontalPad(pygame.sprite.Sprite):
+        normal = pygame.image.load('images/race_pads.png')
+        def __init__(self, position):
+            super(HorizontalPad, self).__init__()
+            self.rect = pygame.Rect(self.normal.get_rect())
+            self.rect.center = position
+            self.image = self.normal
+
+    class SmallHorizontalPad(pygame.sprite.Sprite):
+        normal = pygame.image.load('images/small_horizontal.png')
+        def __init__(self, position):
+            super(SmallHorizontalPad, self).__init__()
+            self.rect = pygame.Rect(self.normal.get_rect())
+            self.rect.center = position
+            self.image = self.normal
+
+    class SmallVerticalPad(pygame.sprite.Sprite):
+        normal = pygame.image.load('images/small_vertical.png')
+        def __init__(self, position):
+            super(SmallVerticalPad, self).__init__()
+            self.rect = pygame.Rect(self.normal.get_rect())
+            self.rect.center = position
+            self.image = self.normal        
+
+    #level design
     pads = [
-        PadSprite((0, 10)),
-        PadSprite((600, 10)),
-        PadSprite((1100, 10)),
-        PadSprite((100, 150)),
-        PadSprite((600, 150)),
-        PadSprite((100, 300)),
-        PadSprite((800, 300)),
-        PadSprite((400, 450)),
-        PadSprite((700, 450)),
-        PadSprite((200, 600)),
-        PadSprite((900, 600)),
-        PadSprite((400, 750)),
-        PadSprite((800, 750)),
+        PadSprite((0, 200)),
+        PadSprite((0, 400)),
+        HorizontalPad((60, 0)),
+        HorizontalPad((300, 0)),
+        HorizontalPad((700, 0)),
+        HorizontalPad((900, 0)),
+        PadSprite((1024, 100)),
+        PadSprite((1024, 550)),
+        HorizontalPad((1024, 768)),
+        HorizontalPad((624, 768)),
+        HorizontalPad((224, 768)),
+        PadSprite((200, 768)),
+        PadSprite((200, 368)),
+        HorizontalPad((450, 130)),
+        HorizontalPad((550, 130)),
+        PadSprite((800, 375)),
+        SmallHorizontalPad((670, 615)),
+        SmallHorizontalPad((470, 615)),
+        SmallVerticalPad((350, 490)),
+        SmallVerticalPad((350, 390)),
+        SmallHorizontalPad((470, 270)),
+        SmallVerticalPad((600, 390))
+        # PadSprite((200, 368))
+    
+    
     ]
     pad_group = pygame.sprite.RenderPlain(*pads)
 
@@ -127,36 +124,36 @@ def level1():
         def draw(self, screen):
             screen.blit(self.image, self.rect)
 
-    trophies = [Trophy((285,0))]
+    trophies = [Trophy((450,320))]
     trophy_group = pygame.sprite.RenderPlain(*trophies)
 
     # CREATE A CAR AND RUN
     rect = screen.get_rect()
-    car = CarSprite('images/car.png', (10, 730))
+    car = CarSprite('images/car.png', (30, 730))
     car_group = pygame.sprite.RenderPlain(car)
 
     #THE GAME LOOP
     while 1:
-        #USER INPUT
         t1 = time.time()
         dt = t1-t0
-
+        #USER INPUT
         deltat = clock.tick(30)
         for event in pygame.event.get():
+            if event.type == pygame.QUIT: sys.exit(0)
             if not hasattr(event, 'key'): continue
-            down = event.type == KEYDOWN 
+            down = event.type == KEYDOWN  
             if win_condition == None: 
                 if event.key == K_RIGHT: car.k_right = down * -5 
                 elif event.key == K_LEFT: car.k_left = down * 5
                 elif event.key == K_UP: car.k_up = down * 2
                 elif event.key == K_DOWN: car.k_down = down * -2 
                 elif event.key == K_ESCAPE: sys.exit(0) # quit the game
-            elif win_condition == True and event.key == K_SPACE: level2.level2()
+            elif win_condition == True and event.key == K_SPACE: level3.level3()
             elif win_condition == False and event.key == K_SPACE: 
-                level1()
+                level2()
                 t0 = t1
             elif event.key == K_ESCAPE: sys.exit(0)    
-    
+        
         #COUNTDOWN TIMER
         seconds = round((20 - dt),2)
         if win_condition == None:
@@ -193,29 +190,14 @@ def level1():
             win_text = win_font.render('Press Space to Advance', True, (0,255,0))
             if win_condition == True:
                 car.k_right = -5
-                
 
-        pad_group.update(collisions)
         pad_group.draw(screen)
         car_group.draw(screen)
         trophy_group.draw(screen)
         #Counter Render
-        screen.blit(timer_text, (20,60))
+        screen.blit(timer_text, (20,20))
         screen.blit(win_text, (250, 700))
         screen.blit(loss_text, (250, 700))
         pygame.display.flip()
+        
 
-
-```
-##Screenshots
-![Alt text](images/level1_screenshot.png?raw=true)
-Level 1
-
-![Alt text](images/crash_screenshot.png?raw=true)
-Crash Screenshot
-
-  
-##Project History
-Start: 06/27/17
-End: 07/30/17
-8/1/30 added title screen and README

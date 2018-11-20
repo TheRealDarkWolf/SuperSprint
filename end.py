@@ -11,6 +11,7 @@ def end_game():
         screen.blit(win_text, (60, 384))
         pygame.display.flip()
         for event in pygame.event.get():
+            if event.type == pygame.QUIT: sys.exit(0)
             if not hasattr(event, 'key'): continue
             if event.key == K_ESCAPE: sys.exit(0) # quit the game
 
