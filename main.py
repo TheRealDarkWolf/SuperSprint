@@ -106,7 +106,7 @@ def level1():
         if pixx != (0,0,0):
             win_condition = False
             timer_text = font.render("Crash!", True, (255,0,0))
-            car.image = pygame.image.load(os.path.join(img_folder,'collision.png')).convert_alpha()
+            car.src_image = pygame.image.load(os.path.join(img_folder,'collision.png')).convert_alpha()
             loss_text = win_font.render('Press Space to Retry', True, (255,0,0))
             seconds = 0
             car.MAX_FORWARD_SPEED = 0
