@@ -27,10 +27,11 @@ def level1():
 
     pixels = bgimgpix.load() # this is not a list, nor is it list()'able
     width, height = bgimgpix.size
-    
-    
 
-
+    
+    crashcount = 0
+    crosscount = 0
+    crossflag = False
 
     class CarSprite(pygame.sprite.Sprite):
         MAX_FORWARD_SPEED = 7.5
@@ -43,7 +44,7 @@ def level1():
             self.src_image = pygame.image.load(image).convert_alpha()
             self.position = position
             self.speed = 0
-            self.direction = -90
+            self.direction = -70
             self.k_left = self.k_right = self.k_down = self.k_up = 0
 
         def update(self, deltat):
@@ -53,11 +54,15 @@ def level1():
                 self.speed = self.MAX_FORWARD_SPEED
             elif self.speed < -self.MAX_REVERSE_SPEED:
                 self.speed = -self.MAX_REVERSE_SPEED
-            elif self.k_up == 0 and self.k_down == 0:
+            elif self.k_up == 0 and self.k_down == 0 and self.speed:
                 if self.speed > 0:
                     self.speed -= 0.15
+                    if abs(self.speed - 0.15) <= 0.15:
+                        self.speed = 0
                 elif self.speed < 0:
                     self.speed += 0.15
+                    if abs(self.speed - 0.15) <= 0.15:
+                        self.speed = 0
             self.direction += (self.k_right + self.k_left)
             x, y = (self.position)
             rad = self.direction * math.pi / 180
@@ -68,9 +73,21 @@ def level1():
             self.rect = self.image.get_rect()
             self.rect.center = self.position
 
+    class FinishLine(pygame.sprite.Sprite):
+        def __init__(self, position):
+            pygame.sprite.Sprite.__init__(self)
+            self.image = pygame.image.load(os.path.join(img_folder,'end.png')).convert_alpha()
+            self.rect = self.image.get_rect()
+            self.rect.x, self.rect.y = position
+        def draw(self, screen):
+            screen.blit(self.image, self.rect)
+
+    finishline = [FinishLine((540,680))]
+    finishline_group = pygame.sprite.RenderPlain(*finishline)
+
     # CREATE A CAR AND RUN
     rect = screen.get_rect()
-    car = CarSprite(os.path.join(img_folder,'car.png'), (500, 740))
+    car = CarSprite(os.path.join(img_folder,'car.png'), (500, 745))
     car_group = pygame.sprite.RenderPlain(car)
 
     #THE GAME LOOP
@@ -105,24 +122,44 @@ def level1():
         pixx = pixels[x,y]
         if pixx != (0,0,0):
             win_condition = False
-            timer_text = font.render("Crash!", True, (255,0,0))
-            car.src_image = pygame.image.load(os.path.join(img_folder,'collision.png')).convert_alpha()
-            loss_text = win_font.render('Press Space to Retry', True, (255,0,0))
-            seconds = 0
             car.MAX_FORWARD_SPEED = 0
             car.MAX_REVERSE_SPEED = 0
-            car.k_right = 0
-            car.k_left = 0
+            car.k_right = -27.5
+            crashcount+=1
+            if crashcount >= 5:
+                car.src_image = pygame.image.load(os.path.join(img_folder,'collision.png')).convert_alpha()
+                car.k_right = 0
+                timer_text = font.render("Crash!", True, (255,0,0))
+                loss_text = win_font.render('Press Space to Retry', True, (255,0,0))
+                seconds = seconds
+
+        screen.blit(bg, [0, 0])
+        car_group.update(deltat)
+
+        finishline_pass = pygame.sprite.groupcollide(car_group, finishline_group, False, False)
+        if finishline_pass != {} and not crossflag:
+            crosscount += 1
+            crossflag = True
+            if crosscount >= 2:
+                seconds = seconds
+                timer_text = font.render("Finished!", True, (0,255,0))
+                win_condition = True
+                car.MAX_FORWARD_SPEED = 0
+                car.MAX_REVERSE_SPEED = 0
+                win_text = win_font.render('Press Space to Advance', True, (0,255,0))
+                car.k_right = -5
+
+        if finishline_pass == {} and crossflag:
+            crossflag = False
 
         #print(pixx)
         #print(car_group)
         #RENDERING
-        screen.blit(bg, [0, 0])
-        car_group.update(deltat)
+        
         
 
 
-       
+        finishline_group.draw(screen)
         car_group.draw(screen)
         #Counter Render
         screen.blit(timer_text, (20,60))
