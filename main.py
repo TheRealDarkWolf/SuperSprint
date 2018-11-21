@@ -5,11 +5,12 @@ import os
 
 game_folder = os.path.dirname(__file__)
 img_folder= os.path.join(game_folder, "images")
+WHITE= (255, 255, 255)
 def level1():
     pygame.mixer.pre_init(44100, -16, 2, 2048)
     pygame.init()
     pygame.mixer.init()
-    screen = pygame.display.set_mode((1024, 768))
+    screen = pygame.display.set_mode((1100, 750))
     #GAME CLOCK
     clock = pygame.time.Clock()
     font = pygame.font.Font(None, 75)
@@ -20,8 +21,8 @@ def level1():
     pygame.mixer.music.load('My_Life_Be_Like.mp3')
     pygame.mixer.music.play(-1)
     t0 = time.time()
-    
-    
+
+
 
 
 
@@ -33,7 +34,9 @@ def level1():
 
         def __init__(self, image, position):
             pygame.sprite.Sprite.__init__(self)
-            self.src_image = pygame.image.load(image).convert_alpha()
+            self.src_image = pygame.image.load(image).convert()
+            self.mask= pygame.mask.from_surface(self.src_image)
+            self.src_image.set_colorkey(WHITE)
             self.position = position
             self.speed = self.direction = 0
             self.k_left = self.k_right = self.k_down = self.k_up = 0
@@ -63,32 +66,65 @@ def level1():
             self.position = (x, y)
             self.image = pygame.transform.rotate(self.src_image, self.direction)
             self.rect = self.image.get_rect()
+            self.mask= pygame.mask.from_surface(self.image)
             self.rect.center = self.position
 
     class PadSprite(pygame.sprite.Sprite):
-        normal = pygame.image.load(os.path.join(img_folder,'race_pads.png')).convert_alpha()
+        normal = pygame.image.load(os.path.join(img_folder,'barrier_new.png')).convert_alpha()
         hit = pygame.image.load(os.path.join(img_folder,'collision.png')).convert_alpha()
         def __init__(self, position):
             super(PadSprite, self).__init__()
             self.rect = pygame.Rect(self.normal.get_rect())
             self.rect.center = position
+            self.image=self.normal
+            self.mask= pygame.mask.from_surface(self.image)
         def update(self, hit_list):
-            if self in hit_list: self.image = self.hit
-            else: self.image = self.normal
+            if self in hit_list:
+                self.image = self.hit
+                self.mask= pygame.mask.from_surface(self.image)
+            else:
+                self.image = self.normal
+                self.mask= pygame.mask.from_surface(self.image)
+
+    class VerticalPad(pygame.sprite.Sprite):
+        normal = pygame.image.load(os.path.join(img_folder,'barrier_v.png')).convert()
+        def __init__(self, position):
+            super(VerticalPad, self).__init__()
+            self.rect = pygame.Rect(self.normal.get_rect())
+            self.rect.center = position
+            self.image = self.normal
+            self.mask= pygame.mask.from_surface(self.image)
     pads = [
-        PadSprite((0, 10)),
-        PadSprite((600, 10)),
-        PadSprite((1100, 10)),
-        PadSprite((100, 150)),
-        PadSprite((600, 150)),
-        PadSprite((100, 300)),
-        PadSprite((800, 300)),
-        PadSprite((400, 450)),
-        PadSprite((700, 450)),
-        PadSprite((200, 600)),
+        PadSprite((125, 12.5)),
+        PadSprite((475, 12.5)),
+        PadSprite((725, 12.5)),
+        PadSprite((975, 12.5)),
+        PadSprite((125, 150)),
+        PadSprite((375, 150)),
+        PadSprite((625, 150)),
+        PadSprite((725, 150)),
+        VerticalPad((10, 125)),
+        VerticalPad((1090, 125)),
+        PadSprite((125, 300)),
+        PadSprite((225, 300)),
+        PadSprite((750, 300)),
+        PadSprite((975, 300)),
+        PadSprite((275, 450)),
+        PadSprite((525, 450)),
+        PadSprite((775, 450)),
+        VerticalPad((10, 375)),
+        VerticalPad((1090, 375)),
+        PadSprite((125, 600)),
+        PadSprite((325, 600)),
+        PadSprite((775, 600)),
         PadSprite((900, 600)),
-        PadSprite((400, 750)),
-        PadSprite((800, 750)),
+        PadSprite((975, 600)),
+        VerticalPad((10, 625)),
+        VerticalPad((1090, 625)),
+        PadSprite((275, 737.5)),
+        PadSprite((525, 737.5)),
+        PadSprite((775, 737.5)),
+        PadSprite((975, 737.5)),
     ]
     pad_group = pygame.sprite.RenderPlain(*pads)
 
@@ -96,6 +132,7 @@ def level1():
         def __init__(self, position):
             pygame.sprite.Sprite.__init__(self)
             self.image = pygame.image.load(os.path.join(img_folder,'trophy.png')).convert_alpha()
+            self.image.set_colorkey((0,0,0))
             self.rect = self.image.get_rect()
             self.rect.x, self.rect.y = position
         def draw(self, screen):
@@ -104,9 +141,13 @@ def level1():
     trophies = [Trophy((285,0))]
     trophy_group = pygame.sprite.RenderPlain(*trophies)
 
+    #BACKGROUND
+    background= pygame.image.load(os.path.join(img_folder, "bgpic2.png")).convert()
+    background_rect=background.get_rect()
+
     # CREATE A CAR AND RUN
     rect = screen.get_rect()
-    car = CarSprite(os.path.join(img_folder,'car.png'), (10, 730))
+    car = CarSprite(os.path.join(img_folder,'red_car.png'), (50, 730))
     car_group = pygame.sprite.RenderPlain(car)
 
     #THE GAME LOOP
@@ -120,8 +161,8 @@ def level1():
             if event.type == pygame.QUIT: sys.exit(0)
             if not hasattr(event, 'key'): continue
             down = event.type == KEYDOWN
-            print(down)
-            print(event.key)
+            #print(down)
+            #print(event.key)
             if win_condition == None:
                 if event.key == K_RIGHT: car.k_right = down * -5
                 elif event.key == K_LEFT: car.k_left = down * 5
@@ -133,7 +174,7 @@ def level1():
                 level1()
                 t0 = t1
             elif event.key == K_ESCAPE: sys.exit(0)
-            
+
 
         #COUNTDOWN TIMER
         seconds = round((20 - dt),2)
@@ -147,8 +188,9 @@ def level1():
 
         #RENDERING
         screen.fill((0,0,0))
+        screen.blit(background, background_rect)
         car_group.update(deltat)
-        collisions = pygame.sprite.groupcollide(car_group, pad_group, False, False, collided = None)
+        collisions = pygame.sprite.groupcollide(car_group, pad_group, False, False, pygame.sprite.collide_mask)
         if collisions != {}:
             win_condition = False
             timer_text = font.render("Crash!", True, (255,0,0))
@@ -182,4 +224,3 @@ def level1():
         screen.blit(win_text, (250, 700))
         screen.blit(loss_text, (250, 700))
         pygame.display.flip()
-
