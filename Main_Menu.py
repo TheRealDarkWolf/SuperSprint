@@ -1,5 +1,6 @@
 import pygame, math, sys, time, end, main
 from pygame.locals import *
+from hangman.hangman import main
 import os
 game_folder = os.path.dirname(__file__)
 img_folder= os.path.join(game_folder, "images")
@@ -11,9 +12,14 @@ while 1:
     for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit(0)
                 if not hasattr(event, 'key'): continue
+                if event.key:
+                    print(event.key)
                 if event.key == K_SPACE:
                     main.level1()
                 elif event.key == K_ESCAPE: sys.exit(0)
+                elif event.key == K_RETURN:
+                    pygame.display.quit()
+                    main()
     img = pygame.image.load(os.path.join(img_folder,"MainMenuFinal.png")).convert()
     screen.blit(img,(0,0))
     pygame.display.flip()
