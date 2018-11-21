@@ -12,8 +12,6 @@ while 1:
     for event in pygame.event.get():
                 if event.type == pygame.QUIT: sys.exit(0)
                 if not hasattr(event, 'key'): continue
-                if event.key:
-                    print(event.key)
                 if event.key == K_SPACE:
                     main.level1()
                 elif event.key == K_ESCAPE: sys.exit(0)
