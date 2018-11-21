@@ -33,7 +33,7 @@ def level1():
 
         def __init__(self, image, position):
             pygame.sprite.Sprite.__init__(self)
-            self.src_image = pygame.image.load(image).convert()
+            self.src_image = pygame.image.load(image).convert_alpha()
             self.position = position
             self.speed = self.direction = 0
             self.k_left = self.k_right = self.k_down = self.k_up = 0
@@ -45,11 +45,16 @@ def level1():
                 self.speed = self.MAX_FORWARD_SPEED
             elif self.speed < -self.MAX_REVERSE_SPEED:
                 self.speed = -self.MAX_REVERSE_SPEED
-            elif self.k_up == 0 and self.k_down == 0:
+            elif self.k_up == 0 and self.k_down == 0 and self.speed != 0:
                 if self.speed > 0:
                     self.speed -= 0.15
+                    if abs(self.speed - 0.15) <= 0.15:
+                        self.speed = 0
                 elif self.speed < 0:
                     self.speed += 0.15
+                    if abs(self.speed - 0.15) <= 0.15:
+                        self.speed = 0
+
             self.direction += (self.k_right + self.k_left)
             x, y = (self.position)
             rad = self.direction * math.pi / 180
@@ -61,8 +66,8 @@ def level1():
             self.rect.center = self.position
 
     class PadSprite(pygame.sprite.Sprite):
-        normal = pygame.image.load(os.path.join(img_folder,'race_pads.png')).convert()
-        hit = pygame.image.load(os.path.join(img_folder,'collision.png')).convert()
+        normal = pygame.image.load(os.path.join(img_folder,'race_pads.png')).convert_alpha()
+        hit = pygame.image.load(os.path.join(img_folder,'collision.png')).convert_alpha()
         def __init__(self, position):
             super(PadSprite, self).__init__()
             self.rect = pygame.Rect(self.normal.get_rect())
@@ -90,7 +95,7 @@ def level1():
     class Trophy(pygame.sprite.Sprite):
         def __init__(self, position):
             pygame.sprite.Sprite.__init__(self)
-            self.image = pygame.image.load(os.path.join(img_folder,'trophy.png')).convert()
+            self.image = pygame.image.load(os.path.join(img_folder,'trophy.png')).convert_alpha()
             self.rect = self.image.get_rect()
             self.rect.x, self.rect.y = position
         def draw(self, screen):
@@ -147,7 +152,7 @@ def level1():
         if collisions != {}:
             win_condition = False
             timer_text = font.render("Crash!", True, (255,0,0))
-            car.image = pygame.image.load(os.path.join(img_folder,'collision.png')).convert()
+            car.image = pygame.image.load(os.path.join(img_folder,'collision.png')).convert_alpha()
             loss_text = win_font.render('Press Space to Retry', True, (255,0,0))
             seconds = 0
             car.MAX_FORWARD_SPEED = 0

@@ -3,7 +3,9 @@ import pygame, math, sys, time, level3
 from pygame.locals import *
 
 def level2():
+    pygame.mixer.pre_init(44100, -16, 2, 2048)
     pygame.init()
+    pygame.mixer.init()
     screen = pygame.display.set_mode((1024, 768))
     #GAME CLOCK
     clock = pygame.time.Clock()
@@ -14,13 +16,15 @@ def level2():
     win_condition = None
     win_text = font.render('', True, (0, 255, 0))
     loss_text = font.render('', True, (255, 0, 0))
+    pygame.mixer.music.load('My_Life_Be_Like.mp3')
+    pygame.mixer.music.play(-1)
     t0 = time.time()
 
 
 
     class CarSprite(pygame.sprite.Sprite):
-        MAX_FORWARD_SPEED = 10
-        MAX_REVERSE_SPEED = 10
+        MAX_FORWARD_SPEED = 7.5
+        MAX_REVERSE_SPEED = 7.5
         ACCELERATION = 2
         TURN_SPEED = 10
 
@@ -38,11 +42,16 @@ def level2():
                 self.speed = self.MAX_FORWARD_SPEED
             if self.speed < -self.MAX_REVERSE_SPEED:
                 self.speed = -self.MAX_REVERSE_SPEED
-            elif self.k_up == 0 and self.k_down == 0:
+            if self.k_up == 0 and self.k_down == 0 and self.speed:
                 if self.speed > 0:
                     self.speed -= 0.15
+                    if abs(self.speed - 0.15) <= 0.15:
+                        self.speed = 0
                 elif self.speed < 0:
                     self.speed += 0.15
+                    if abs(self.speed - 0.15) <= 0.15:
+                        self.speed = 0
+
             self.direction += (self.k_right + self.k_left)
             x, y = (self.position)
             rad = self.direction * math.pi / 180
@@ -145,8 +154,8 @@ def level2():
             if win_condition == None: 
                 if event.key == K_RIGHT: car.k_right = down * -5 
                 elif event.key == K_LEFT: car.k_left = down * 5
-                elif event.key == K_UP: car.k_up = down * 2
-                elif event.key == K_DOWN: car.k_down = down * -2 
+                elif event.key == K_UP: car.k_up = down * 1
+                elif event.key == K_DOWN: car.k_down = down * -1
                 elif event.key == K_ESCAPE: sys.exit(0) # quit the game
             elif win_condition == True and event.key == K_SPACE: level3.level3()
             elif win_condition == False and event.key == K_SPACE: 
