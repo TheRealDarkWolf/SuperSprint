@@ -5,6 +5,7 @@ import os
 
 game_folder = os.path.dirname(__file__)
 img_folder= os.path.join(game_folder, "images")
+WHITE= (255, 255, 255)
 def level1():
     pygame.mixer.pre_init(44100, -16, 2, 2048)
     pygame.init()
@@ -34,7 +35,8 @@ def level1():
         def __init__(self, image, position):
             pygame.sprite.Sprite.__init__(self)
             self.src_image = pygame.image.load(image).convert()
-            self.src_image.set_colorkey((255, 255, 255))
+            self.mask= pygame.mask.from_surface(self.src_image)
+            self.src_image.set_colorkey(WHITE)
             self.position = position
             self.speed = self.direction = 0
             self.k_left = self.k_right = self.k_down = self.k_up = 0
@@ -64,6 +66,7 @@ def level1():
             self.position = (x, y)
             self.image = pygame.transform.rotate(self.src_image, self.direction)
             self.rect = self.image.get_rect()
+            self.mask= pygame.mask.from_surface(self.image)
             self.rect.center = self.position
 
     class PadSprite(pygame.sprite.Sprite):
@@ -73,9 +76,15 @@ def level1():
             super(PadSprite, self).__init__()
             self.rect = pygame.Rect(self.normal.get_rect())
             self.rect.center = position
+            self.image=self.normal
+            self.mask= pygame.mask.from_surface(self.image)
         def update(self, hit_list):
-            if self in hit_list: self.image = self.hit
-            else: self.image = self.normal
+            if self in hit_list:
+                self.image = self.hit
+                self.mask= pygame.mask.from_surface(self.image)
+            else:
+                self.image = self.normal
+                self.mask= pygame.mask.from_surface(self.image)
 
     class VerticalPad(pygame.sprite.Sprite):
         normal = pygame.image.load(os.path.join(img_folder,'barrier_v.png')).convert()
@@ -84,6 +93,7 @@ def level1():
             self.rect = pygame.Rect(self.normal.get_rect())
             self.rect.center = position
             self.image = self.normal
+            self.mask= pygame.mask.from_surface(self.image)
     pads = [
         PadSprite((125, 12.5)),
         PadSprite((475, 12.5)),
@@ -180,7 +190,7 @@ def level1():
         screen.fill((0,0,0))
         screen.blit(background, background_rect)
         car_group.update(deltat)
-        collisions = pygame.sprite.groupcollide(car_group, pad_group, False, False, collided = None)
+        collisions = pygame.sprite.groupcollide(car_group, pad_group, False, False, pygame.sprite.collide_mask)
         if collisions != {}:
             win_condition = False
             timer_text = font.render("Crash!", True, (255,0,0))
