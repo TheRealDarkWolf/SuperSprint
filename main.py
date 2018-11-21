@@ -147,7 +147,7 @@ def level1():
 
     # CREATE A CAR AND RUN
     rect = screen.get_rect()
-    car = CarSprite(os.path.join(img_folder,'red_car_3.png'), (50, 730))
+    car = CarSprite(os.path.join(img_folder,'red_car.png'), (50, 730))
     car_group = pygame.sprite.RenderPlain(car)
 
     #THE GAME LOOP

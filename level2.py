@@ -118,7 +118,7 @@ def level2():
         def draw(self, screen):
             screen.blit(self.image, self.rect)
 
-    trophies = [Trophy((1025, 50))]
+    trophies = [Trophy((1015, 50))]
     trophy_group = pygame.sprite.RenderPlain(*trophies)
 
     #BACKGROUND

@@ -14,6 +14,6 @@ while 1:
                 if event.key == K_SPACE:
                     main.level1()
                 elif event.key == K_ESCAPE: sys.exit(0)
-    img = pygame.image.load(os.path.join(img_folder,"main_menu_image.png")).convert()
+    img = pygame.image.load(os.path.join(img_folder,"MainMenuFinal.png")).convert()
     screen.blit(img,(0,0))
     pygame.display.flip()
