@@ -5,13 +5,15 @@ import random
 import os
 
 game_folder = os.path.dirname(__file__)
-wrd_file= os.path.join(game_folder, "wordfile.txt")
+wrd_files= ['animal','bollywood','hollywood','sports','fruits']
 
 def wordlist():
+    filepath = wrd_files[random.randint(0,len(wrd_files))]
+    wrd_file = os.path.join(game_folder, filepath+".txt")
     input_file=open(wrd_file,'r')
     wordlst=input_file.readlines()
     input_file.close()
-    return wordlst[random.randint(0,len(wordlst))]
+    return (wordlst[random.randint(0,len(wordlst))],filepath)
 
 def createturtle():
     turtle.setup(400,600)
@@ -77,7 +79,9 @@ def hang():
 	return 0
 
 def main():
-    word=wordlist().strip('\n').lower()
+    res = wordlist()
+    word=res[0].strip('\n').lower()
+    genre = res[1].lower()
     charlist=list(word)
     defaultstr=""
     count=0
@@ -89,6 +93,7 @@ def main():
     print(defaultstr)
     createturtle()
     terminate=False
+    donewrd = []
     while not terminate:
             if '_' not in defaultstr:
                 print("Congratulations!! You guessed it right. The correct word was",word)
@@ -96,10 +101,15 @@ def main():
                 turtle.bgcolor("green")
                 turtle.exitonclick()
                 break
+            print("Word Genre:",genre)
             char=input("Enter a letter:")
             if len(char) != 1 or ord(char.upper())<65 or ord(char.upper())>90:
                 print("Invalid input. Please try again")
                 continue
+            if char in donewrd:
+                print("You have already guessed this letter. Please try another")
+                continue
+            donewrd.append(char)
             if char in charlist:
                 for i in range(len(word)):
                     if(char in word[i]):
