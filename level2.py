@@ -172,7 +172,7 @@ def level2():
         screen.blit(background, background_rect)
         car_group.update(deltat)
         collisions = pygame.sprite.groupcollide(car_group, pad_group, False, False, pygame.sprite.collide_mask)
-        if collisions != {}:
+        if collisions != {} and win_condition != True:
             win_condition = False
             timer_text = font.render("Crash!", True, RED)
             car.image = pygame.image.load(os.path.join(img_folder, "collision.png")).convert_alpha()
