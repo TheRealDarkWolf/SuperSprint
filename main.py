@@ -147,7 +147,7 @@ def level1():
 
     # CREATE A CAR AND RUN
     rect = screen.get_rect()
-    car = CarSprite(os.path.join(img_folder,'red_car.png'), (50, 730))
+    car = CarSprite(os.path.join(img_folder,'red_car_3.png'), (50, 730))
     car_group = pygame.sprite.RenderPlain(car)
 
     #THE GAME LOOP
@@ -187,7 +187,7 @@ def level1():
 
 
         #RENDERING
-        screen.fill((0,0,0))
+        screen.fill((255, 255, 255))
         screen.blit(background, background_rect)
         car_group.update(deltat)
         collisions = pygame.sprite.groupcollide(car_group, pad_group, False, False, pygame.sprite.collide_mask)

@@ -12,7 +12,7 @@ def wordlist():
     wordlst=input_file.readlines()
     input_file.close()
     return wordlst[random.randint(0,len(wordlst))]
-	
+
 def createturtle():
     turtle.setup(400,600)
     window=turtle.Screen()
@@ -25,7 +25,7 @@ def go_to(x, y, p):
 	turtle.goto(x,y)
 	turtle.setheading(p)
 	turtle.pendown()
-	
+
 def hang():
 	if stage[0]==0:
 		go_to(-110,0,0)
@@ -75,7 +75,7 @@ def hang():
 		turtle.forward(25)
 	stage[0]+=1
 	return 0
-    
+
 def main():
     word=wordlist().strip('\n').lower()
     charlist=list(word)
@@ -97,6 +97,9 @@ def main():
                 turtle.exitonclick()
                 break
             char=input("Enter a letter:")
+            if len(char) != 1 or ord(char.upper())<65 or ord(char.upper())>90:
+                print("Invalid input. Please try again")
+                continue
             if char in charlist:
                 for i in range(len(word)):
                     if(char in word[i]):
