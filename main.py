@@ -12,7 +12,7 @@ BLUE= (0, 0, 255)
 GREEN= (0, 255, 0)
 YELLOW= (255, 255, 0)
 
-def level1():
+def level1(mpos=0):
     pygame.mixer.pre_init(44100, -16, 2, 2048)
     pygame.init()
     pygame.mixer.init()
@@ -26,6 +26,7 @@ def level1():
     loss_text = font.render('', True, RED)
     pygame.mixer.music.load('My_Life_Be_Like.mp3')
     pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_pos(mpos)
     t0 = time.time()
 
 
@@ -177,9 +178,9 @@ def level1():
                 elif event.key == K_UP: car.k_up = down * 1
                 elif event.key == K_DOWN: car.k_down = down * -1
                 elif event.key == K_ESCAPE: sys.exit(0) # quit the game
-            elif win_condition == True and event.key == K_SPACE: level2.level2()
+            elif win_condition == True and event.key == K_SPACE: level2.level2(mpos+round(pygame.mixer.music.get_pos()/1000))
             elif win_condition == False and event.key == K_SPACE:
-                level1()
+                level1(mpos+round(pygame.mixer.music.get_pos()/1000))
                 t0 = t1
             elif event.key == K_ESCAPE: sys.exit(0)
 
@@ -217,7 +218,6 @@ def level1():
             win_condition = True
             car.MAX_FORWARD_SPEED = 0
             car.MAX_REVERSE_SPEED = 0
-            pygame.mixer.music.play(loops=0, start=0.0)
             win_text = win_font.render('Press Space to Advance', True, GREEN)
             if win_condition == True:
                 car.k_right = -5
