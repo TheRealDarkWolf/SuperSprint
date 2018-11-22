@@ -7,6 +7,11 @@ game_folder = os.path.dirname(__file__)
 img_folder= os.path.join(game_folder, "images")
 WHITE= (255, 255, 255)
 BLACK= (0, 0, 0)
+RED= (255, 0, 0)
+BLUE= (0, 0, 255)
+GREEN= (0, 255, 0)
+YELLOW= (255, 255, 0)
+
 def level2():
     pygame.mixer.pre_init(44100, -16, 2, 2048)
     pygame.init()
@@ -17,8 +22,8 @@ def level2():
     font = pygame.font.Font(None, 75)
     win_font = pygame.font.Font(None, 50)
     win_condition = None
-    win_text = font.render('', True, (0, 255, 0))
-    loss_text = font.render('', True, (255, 0, 0))
+    win_text = font.render('', True, RED)
+    loss_text = font.render('', True, GREEN)
     pygame.mixer.music.load('My_Life_Be_Like.mp3')
     pygame.mixer.music.play(-1)
     t0 = time.time()
@@ -112,7 +117,7 @@ def level2():
         def __init__(self, position):
             pygame.sprite.Sprite.__init__(self)
             self.image = pygame.image.load(os.path.join(img_folder, "trophy.png")).convert_alpha()
-            self.image.set_colorkey((0, 0, 0))
+            self.image.set_colorkey(BLACK)
             self.rect = self.image.get_rect()
             self.rect.x, self.rect.y = position
         def draw(self, screen):
@@ -155,23 +160,23 @@ def level2():
         #COUNTDOWN TIMER
         seconds = round((20 - dt),2)
         if win_condition == None:
-            timer_text = font.render(str(seconds), True, (255,255,0))
+            timer_text = font.render(str(seconds), True, YELLOW)
             if seconds <= 0:
                 win_condition = False
-                timer_text = font.render("Time!", True, (255,0,0))
-                loss_text = win_font.render('Press Space to Retry', True, (255,0,0))
+                timer_text = font.render("Time!", True, RED)
+                loss_text = win_font.render('Press Space to Retry', True, RED)
 
 
         #RENDERING
-        screen.fill((0,0,0))
+        screen.fill(BLACK)
         screen.blit(background, background_rect)
         car_group.update(deltat)
         collisions = pygame.sprite.groupcollide(car_group, pad_group, False, False, pygame.sprite.collide_mask)
         if collisions != {}:
             win_condition = False
-            timer_text = font.render("Crash!", True, (255,0,0))
+            timer_text = font.render("Crash!", True, RED)
             car.image = pygame.image.load(os.path.join(img_folder, "collision.png")).convert_alpha()
-            loss_text = win_font.render('Press Space to Retry', True, (255,0,0))
+            loss_text = win_font.render('Press Space to Retry', True, RED)
             seconds = 0
             car.MAX_FORWARD_SPEED = 0
             car.MAX_REVERSE_SPEED = 0
@@ -181,12 +186,12 @@ def level2():
         trophy_collision = pygame.sprite.groupcollide(car_group, trophy_group, False, True)
         if trophy_collision != {}:
             seconds = seconds
-            timer_text = font.render("Finished!", True, (0,255,0))
+            timer_text = font.render("Finished!", True, GREEN)
             win_condition = True
             car.MAX_FORWARD_SPEED = 0
             car.MAX_REVERSE_SPEED = 0
             pygame.mixer.music.play(loops=0, start=0.0)
-            win_text = win_font.render('Press Space to Advance', True, (0,255,0))
+            win_text = win_font.render('Press Space to Advance', True, GREEN)
             if win_condition == True:
                 car.k_right = -5
 
