@@ -1,21 +1,29 @@
 #initialize the screen
 import pygame, math, sys, time, end
 from pygame.locals import *
+import os
+
+game_folder = os.path.dirname(__file__)
+img_folder= os.path.join(game_folder, "images")
+WHITE= (255, 255, 255)
+BLACK= (0, 0, 0)
+RED= (255, 0, 0)
+BLUE= (0, 0, 255)
+GREEN= (0, 255, 0)
+YELLOW= (255, 255, 0)
 
 def level3():
     pygame.mixer.pre_init(44100, -16, 2, 2048)
     pygame.init()
     pygame.mixer.init()
-    screen = pygame.display.set_mode((1024, 768))
+    screen = pygame.display.set_mode((1100, 750))
     #GAME CLOCK
     clock = pygame.time.Clock()
     font = pygame.font.Font(None, 75)
-    win_condition = None
-    pygame.mixer.music.load('My_Life_Be_Like.mp3')
     win_font = pygame.font.Font(None, 50)
     win_condition = None
-    win_text = font.render('', True, (0, 255, 0))
-    loss_text = font.render('', True, (255, 0, 0))
+    win_text = font.render('', True, GREEN)
+    loss_text = font.render('', True, RED)
     pygame.mixer.music.load('My_Life_Be_Like.mp3')
     pygame.mixer.music.play(-1)
     t0 = time.time()
@@ -30,11 +38,13 @@ def level3():
 
         def __init__(self, image, position):
             pygame.sprite.Sprite.__init__(self)
-            self.src_image = pygame.image.load(image)
+            self.src_image = pygame.image.load(image).convert()
+            self.mask=pygame.mask.from_surface(self.src_image)
+            self.src_image.set_colorkey(BLACK)
             self.position = position
             self.speed = self.direction = 0
             self.k_left = self.k_right = self.k_down = self.k_up = 0
-        
+
         def update(self, deltat):
             #SIMULATION
             self.speed += (self.k_up + self.k_down)
@@ -60,47 +70,52 @@ def level3():
             self.position = (x, y)
             self.image = pygame.transform.rotate(self.src_image, self.direction)
             self.rect = self.image.get_rect()
+            self.mask= pygame.mask.from_surface(self.image)
             self.rect.center = self.position
 
     class PadSprite(pygame.sprite.Sprite):
-        normal = pygame.image.load('images/vertical_pads.png')
+        normal = pygame.image.load(os.path.join(img_folder, "vertical_pads.png")).convert_alpha()
         def __init__(self, position):
             super(PadSprite, self).__init__()
             self.rect = pygame.Rect(self.normal.get_rect())
             self.rect.center = position
             self.image = self.normal
+            self.mask= pygame.mask.from_surface(self.image)
 
     class HorizontalPad(pygame.sprite.Sprite):
-        normal = pygame.image.load('images/race_pads.png')
+        normal = pygame.image.load(os.path.join(img_folder, "race_pads.png")).convert_alpha()
         def __init__(self, position):
             super(HorizontalPad, self).__init__()
             self.rect = pygame.Rect(self.normal.get_rect())
             self.rect.center = position
             self.image = self.normal
+            self.mask= pygame.mask.from_surface(self.image)
 
     class SmallHorizontalPad(pygame.sprite.Sprite):
-        normal = pygame.image.load('images/small_horizontal.png')
+        normal = pygame.image.load(os.path.join(img_folder, "small_horizontal.png")).convert_alpha()
         def __init__(self, position):
             super(SmallHorizontalPad, self).__init__()
             self.rect = pygame.Rect(self.normal.get_rect())
             self.rect.center = position
             self.image = self.normal
+            self.mask= pygame.mask.from_surface(self.image)
 
     class SmallVerticalPad(pygame.sprite.Sprite):
-        normal = pygame.image.load('images/small_vertical.png')
+        normal = pygame.image.load(os.path.join(img_folder, "small_vertical.png")).convert_alpha()
         def __init__(self, position):
             super(SmallVerticalPad, self).__init__()
             self.rect = pygame.Rect(self.normal.get_rect())
             self.rect.center = position
-            self.image = self.normal        
+            self.image = self.normal
+            self.mask= pygame.mask.from_surface(self.image)
 
     #level design
     pads = [
-        SmallVerticalPad((0, 550)),
-        SmallVerticalPad((0, 390)),
-        SmallVerticalPad((0, 190)),
-        SmallVerticalPad((0, 90)),
-        SmallVerticalPad((100, -100)),
+        SmallVerticalPad((12.5, 550)),
+        SmallVerticalPad((12.5, 390)),
+        SmallVerticalPad((12.5, 190)),
+        SmallVerticalPad((12.5, 90)),
+        SmallVerticalPad((100, -80)),
         SmallVerticalPad((100, 290)),
         SmallVerticalPad((100, 390)),
         SmallVerticalPad((100, 490)),
@@ -120,11 +135,21 @@ def level3():
         SmallVerticalPad((800, 690)),
         SmallVerticalPad((800, 290)),
         SmallVerticalPad((900, -50)),
-        SmallVerticalPad((1000, 690)),
-        SmallVerticalPad((1000, 290)),
+        SmallVerticalPad((1087.5, 112.5)),
+        SmallVerticalPad((1087.5, 362.5)),
+        SmallVerticalPad((1087.5, 612.5)),
         HorizontalPad((338,170)),
-        HorizontalPad((600,170))
-        
+        HorizontalPad((600,170)),
+        HorizontalPad((112.5, 12.5)),
+        HorizontalPad((375.5, 12.5)),
+        HorizontalPad((625.5, 12.5)),
+        HorizontalPad((875.5, 12.5)),
+        HorizontalPad((1000, 737.5)),
+        HorizontalPad((375.5, 737.5)),
+        HorizontalPad((625.5, 737.5)),
+        HorizontalPad((875.5, 737.5)),
+        HorizontalPad((1000, 737.5)),
+
     ]
 
     pad_group = pygame.sprite.RenderPlain(*pads)
@@ -132,7 +157,7 @@ def level3():
     class Trophy(pygame.sprite.Sprite):
         def __init__(self, position):
             pygame.sprite.Sprite.__init__(self)
-            self.image = pygame.image.load('images/trophy.png')
+            self.image = pygame.image.load(os.path.join(img_folder, "trophy.png")).convert_alpha()
             self.rect = self.image.get_rect()
             self.rect.x, self.rect.y = position
         def draw(self, screen):
@@ -143,7 +168,7 @@ def level3():
 
     # CREATE A CAR AND RUN
     rect = screen.get_rect()
-    car = CarSprite('images/car.png', (30, 730))
+    car = CarSprite(os.path.join(img_folder, "car.png"), (30, 730))
     car_group = pygame.sprite.RenderPlain(car)
 
     #THE GAME LOOP
@@ -155,38 +180,38 @@ def level3():
         for event in pygame.event.get():
             if event.type == pygame.QUIT: sys.exit(0)
             if not hasattr(event, 'key'): continue
-            down = event.type == KEYDOWN  
-            if win_condition == None: 
-                if event.key == K_RIGHT: car.k_right = down * -5 
+            down = event.type == KEYDOWN
+            if win_condition == None:
+                if event.key == K_RIGHT: car.k_right = down * -5
                 elif event.key == K_LEFT: car.k_left = down * 5
                 elif event.key == K_UP: car.k_up = down * 1
-                elif event.key == K_DOWN: car.k_down = down * -1 
+                elif event.key == K_DOWN: car.k_down = down * -1
                 elif event.key == K_ESCAPE: sys.exit(0) # quit the game
             elif win_condition == True and event.key == K_SPACE: end.end_game()
-            elif win_condition == False and event.key == K_SPACE: 
+            elif win_condition == False and event.key == K_SPACE:
                 level3()
                 t0 = t1
-            elif event.key == K_ESCAPE: sys.exit(0)  
-        
+            elif event.key == K_ESCAPE: sys.exit(0)
+
         #COUNTDOWN TIMER
         seconds = round((20 - dt),2)
         if win_condition == None:
-            timer_text = font.render(str(seconds), True, (255,255,0))
+            timer_text = font.render(str(seconds), True, YELLOW)
             if seconds <= 0:
                 win_condition = False
-                timer_text = font.render("Time!", True, (255,0,0))
-                loss_text = win_font.render('Press Space to Retry', True, (255,0,0))
-            
-    
+                timer_text = font.render("Time!", True, RED)
+                loss_text = win_font.render('Press Space to Retry', True, RED)
+
+
         #RENDERING
-        screen.fill((0,0,0))
+        screen.fill((BLACK))
         car_group.update(deltat)
-        collisions = pygame.sprite.groupcollide(car_group, pad_group, False, False, collided = None)
+        collisions = pygame.sprite.groupcollide(car_group, pad_group, False, False, pygame.sprite.collide_mask)
         if collisions != {}:
             win_condition = False
-            timer_text = font.render("Crash!", True, (255,0,0))
-            car.image = pygame.image.load('images/collision.png')
-            loss_text = win_font.render('Press Space to Retry', True, (255,0,0))
+            timer_text = font.render("Crash!", True, RED)
+            car.image = pygame.image.load(os.path.join(img_folder, "collision.png")).convert_alpha()
+            loss_text = win_font.render('Press Space to Retry', True, RED)
             seconds = 0
             car.MAX_FORWARD_SPEED = 0
             car.MAX_REVERSE_SPEED = 0
@@ -196,12 +221,12 @@ def level3():
         trophy_collision = pygame.sprite.groupcollide(car_group, trophy_group, False, True)
         if trophy_collision != {}:
             seconds = seconds
-            timer_text = font.render("Finished!", True, (0,255,0))
+            timer_text = font.render("Finished!", True, GREEN)
             win_condition = True
             car.MAX_FORWARD_SPEED = 0
             car.MAX_REVERSE_SPEED = 0
             pygame.mixer.music.play(loops=0, start=0.0)
-            win_text = win_font.render('Press Space to Advance', True, (0,255,0))
+            win_text = win_font.render('Press Space to Advance', True, GREEN)
             if win_condition == True:
                 car.k_right = -5
 
@@ -213,5 +238,6 @@ def level3():
         screen.blit(win_text, (250, 700))
         screen.blit(loss_text, (250, 700))
         pygame.display.flip()
-        
 
+if __name__ == "__main__":
+    level3()
