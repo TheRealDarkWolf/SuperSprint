@@ -7,8 +7,7 @@ import os
 game_folder = os.path.dirname(__file__)
 wrd_files= ['animal','bollywood','hollywood','sports','fruits']
 
-def wordlist():
-    filepath = wrd_files[random.randint(0,len(wrd_files))]
+def wordlist(filepath):
     wrd_file = os.path.join(game_folder, filepath+".txt")
     input_file=open(wrd_file,'r')
     wordlst=input_file.readlines()
@@ -79,7 +78,12 @@ def hang():
 	return 0
 
 def main():
-    res = wordlist()
+    print("Welcome to hangman!!")
+    print("These are the genre we offer:")
+    for i in range(len(wrd_files)):
+        print(i+1,wrd_files[i])
+    ch = input("Enter the number corresponding to the genre you like:")
+    res = wordlist(wrd_files[int(ch)-1])
     word=res[0].strip('\n').lower()
     genre = res[1].lower()
     charlist=list(word)

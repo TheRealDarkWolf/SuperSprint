@@ -24,6 +24,8 @@ while 1:
                 elif event.key == K_RETURN:
                     pygame.display.quit()
                     mainn()
+                    print("Thank You for Playing Hangman!")
+                    break
     img = pygame.image.load(os.path.join(img_folder,"MainMenuFinal.png")).convert()
     screen.blit(img,(0,0))
     pygame.display.flip()
