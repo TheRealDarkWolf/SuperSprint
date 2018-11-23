@@ -74,6 +74,10 @@ def hang():
 	elif stage[0]==6:
 		go_to(0,100, -135)
 		turtle.forward(25)
+		go_to(0, 162.5, 0)
+		turtle.register_shape(os.path.join(game_folder, "dead2.gif"))
+		turtle.shape(os.path.join(game_folder, "dead2.gif"))
+		turtle.stamp()
 	stage[0]+=1
 	return 0
 

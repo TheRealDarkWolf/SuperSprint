@@ -229,6 +229,6 @@ def level1(mpos=0):
         trophy_group.draw(screen)
         #Counter Render
         screen.blit(timer_text, (20,60))
-        screen.blit(win_text, (250, 700))
-        screen.blit(loss_text, (250, 700))
+        screen.blit(win_text, (330, 660))
+        screen.blit(loss_text, (330, 660))
         pygame.display.flip()
