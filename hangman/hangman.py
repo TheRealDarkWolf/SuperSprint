@@ -5,7 +5,7 @@ import random
 import os
 
 game_folder = os.path.dirname(__file__)
-wrd_files= ['animal','bollywood','hollywood','sports','fruits']
+wrd_files= ['animal','bollywood','hollywood','sports','fruits','random']
 
 def wordlist(filepath):
     wrd_file = os.path.join(game_folder, filepath+".txt")
@@ -28,58 +28,62 @@ def go_to(x, y, p):
 	turtle.pendown()
 
 def hang():
-	if stage[0]==0:
-		go_to(-110,0,0)
-		turtle.speed(0)
-		turtle.forward(120)
-		turtle.right(90)
-		turtle.forward(30)
-		turtle.right(90)
-		turtle.forward(120)
-		turtle.right(90)
-		turtle.forward(30)
-		turtle.right(90)
-		cb = turtle.right
-		for i in range(0,5):
-			turtle.forward(120)
-			cb(90)
-			turtle.forward(5)
-			cb(90)
-			if cb is turtle.right:
-				cb = turtle.left
-			else:
-				cb = turtle.right
-		turtle.forward(120)
-		go_to(-100,0, 90)
-		turtle.forward(200)
-		turtle.right(90)
-		turtle.forward(100)
-		turtle.right(90)
-		turtle.forward(25)
-	elif stage[0]==1:
-		go_to(0, 150, 0)
-		turtle.circle(12.5)
-	elif stage[0]==2:
-		go_to(0,150, -90)
-		turtle.forward(50)
-	elif stage[0]==3:
-		go_to(0,140, -45)
-		turtle.forward(25)
-	elif stage[0]==4:
-		go_to(0,140, -135)
-		turtle.forward(25)
-	elif stage[0]==5:
-		go_to(0,100, -45)
-		turtle.forward(25)
-	elif stage[0]==6:
-		go_to(0,100, -135)
-		turtle.forward(25)
-		go_to(0, 162.5, 0)
-		turtle.register_shape(os.path.join(game_folder, "dead2.gif"))
-		turtle.shape(os.path.join(game_folder, "dead2.gif"))
-		turtle.stamp()
-	stage[0]+=1
-	return 0
+    if stage[0]==0:
+        go_to(-110,0,0)
+        turtle.speed(0)
+        turtle.forward(120)
+        turtle.right(90)
+        turtle.forward(30)
+        turtle.right(90)
+        turtle.forward(120)
+        turtle.right(90)
+        turtle.forward(30)
+        turtle.right(90)
+        cb = turtle.right
+        for i in range(0,5):
+            turtle.forward(120)
+            cb(90)
+            turtle.forward(5)
+            cb(90)
+            if cb is turtle.right:
+                cb = turtle.left
+            else:
+                cb = turtle.right
+        turtle.forward(120)
+        go_to(-100,0, 90)
+        turtle.forward(200)
+        turtle.right(90)
+        turtle.forward(100)
+        turtle.right(90)
+        turtle.forward(25)
+    elif stage[0]==1:
+        go_to(0, 150, 0)
+        turtle.circle(12.5)
+        go_to(0, 162.5, 0)
+        turtle.register_shape(os.path.join(game_folder, "smiley.gif"))
+        turtle.shape(os.path.join(game_folder, "smiley.gif"))
+        turtle.stamp()
+    elif stage[0]==2:
+        go_to(0,150, -90)
+        turtle.forward(50)
+    elif stage[0]==3:
+        go_to(0,140, -45)
+        turtle.forward(25)
+    elif stage[0]==4:
+        go_to(0,140, -135)
+        turtle.forward(25)
+    elif stage[0]==5:
+        go_to(0,100, -45)
+        turtle.forward(25)
+    elif stage[0]==6:
+        go_to(0,100, -135)
+        turtle.forward(25)
+        go_to(0, 162.5, 0)
+        turtle.register_shape(os.path.join(game_folder, "dead2.gif"))
+        turtle.shape(os.path.join(game_folder, "dead2.gif"))
+        turtle.stamp()
+    stage[0]+=1
+    return 0
 
 def main():
     print("Welcome to hangman!!")
